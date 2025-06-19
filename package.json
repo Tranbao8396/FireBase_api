@@ -1,0 +1,16 @@
+{
+  "name": "google-auth-example",
+  "version": "1.0.0",
+  "description": "A simple example of using Google Auth Library with Express",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^5.1.0",
+    "google-auth-library": "^10.1.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Your Name",
+  "license": "MIT",
+  "type": "module"
+}
