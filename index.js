@@ -34,15 +34,11 @@ app.post('/send-notification', async (req, res) => {
             scopes: ['https://www.googleapis.com/auth/firebase.messaging'],
         });
 
-        // const auth = new googleAuth.GoogleAuth({
-        //     credentials: serviceAccount,
-        //     scopes: ['https://www.googleapis.com/auth/firebase.messaging'],
-        // });
-
-        // const accessToken = await auth.getAccessToken();
-        // const projectId = await auth.getProjectId();
-
-
+        await client.authorize();
+        const accessToken = await auth.getAccessToken(client);
+        if (!accessToken) {
+            return res.status(500).send({ error: 'Không thể lấy access token' });
+        }
         // Compose notification payload
         const payload = {
             message: {
@@ -62,7 +58,7 @@ app.post('/send-notification', async (req, res) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken.token}`,
+                Authorization: `Bearer ${accessToken}`,
             },
             body: JSON.stringify(payload),
         });
