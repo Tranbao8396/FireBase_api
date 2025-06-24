@@ -2,6 +2,13 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import {auth, JWT} from 'google-auth-library';
 import fs from 'fs';
+import cors from 'cors';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 // const { google } = pkg;
 
 const app = express();
@@ -13,6 +20,32 @@ const projectId = serviceAccount.project_id;
 
 // Parse JSON request body
 app.use(express.json());
+app.use(cors());
+// Add this line to serve uploaded images
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Prepare to handle file uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    },
+});
+
+const upload = multer({ storage: storage });
+
+// Route: /upload
+app.post('/upload', upload.single('image'), (req, res) => {
+  if (!req.file) return res.status(400).send('không có file uploaded.');
+  res.json({
+    message: 'Image uploaded thành công!',
+    filePath: `uploads/${req.file.filename}`,
+    imageUrl: `http://10.0.2.2:${PORT}/uploads/${req.file.filename}`,
+  });
+});
+
 
 
 // Route: /send-notification
